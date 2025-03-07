@@ -53,9 +53,11 @@ resource "aws_security_group" "nginx_sg" {
   }
 }
 
-resource "aws_instance" "web" {
+resource "aws_instance" "nginx" {
   ami           = "ami-0a5d9cd4e632d99c1"
   instance_type = "t3.micro"
-
+  subnet_id     = aws_subnet.public[0].id
+  security_groups = [aws_security_group.nginx_sg.id]
+  associate_public_ip_address = true
 }
 
