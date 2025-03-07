@@ -8,7 +8,7 @@ resource "aws_internet_gateway" "igw" {
 
 resource "aws_subnet" "private" {
   count = length(var.private_subnets)
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.vpc.id
   cidr_block = var.private_subnets[count.index]
   availability_zone = var.availability_zones[count.index]
 }
@@ -31,14 +31,14 @@ resource "aws_route" "public_route" {
   gateway_id             = aws_internet_gateway.igw.id
 }
 
-resource "aws_route_table_association" "public" {
+resource "aws_route_table_association" "association_public" {
   count          = length(var.public_subnets)
   subnet_id      = aws_subnet.public[count.index].id
   route_table_id = aws_route_table.public.id
 }
 
 resource "aws_security_group" "nginx_sg" {
-  vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.vpc.id
   ingress {
     from_port   = 80
     to_port     = 80
@@ -53,4 +53,9 @@ resource "aws_security_group" "nginx_sg" {
   }
 }
 
+resource "aws_instance" "web" {
+  ami           = "ami-0a5d9cd4e632d99c1"
+  instance_type = "t3.micro"
+
+}
 
